@@ -23,6 +23,8 @@ import { RegisterPayload } from "../../types/AuthType";
 import { Ionicons, FontAwesome } from "@expo/vector-icons";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { Picker } from "@react-native-picker/picker"; 
+import * as Updates from "expo-updates";
+
 
 import { signInWithGoogle } from "../../services/GoogleAuthService";
 
@@ -37,6 +39,9 @@ export default function RegisterScreen({ navigation }: Props) {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isSocialLoading, setIsSocialLoading] = useState(false);
+
+console.log(Updates.runtimeVersion);
+
 
   const [form, setForm] = useState<any>({
     email: "",
@@ -177,21 +182,6 @@ export default function RegisterScreen({ navigation }: Props) {
                     style={styles.input}
                 />
 
-   
-                  <Text style={styles.pickerLabel}>Gender</Text>
-                  <Picker
-                      selectedValue={form.gender}
-                      onValueChange={(itemValue) => handleChange("gender", itemValue)}
-                      style={styles.picker}
-                      dropdownIconColor="#ccc"
-                  >
-                      <Picker.Item label="Select Gender" value="" style={styles.pickerItem} />
-                      <Picker.Item label="Male" value="Male" style={styles.pickerItem} />
-                      <Picker.Item label="Female" value="Female" style={styles.pickerItem} />
-                      <Picker.Item label="Other" value="Other" style={styles.pickerItem} />
-                  </Picker>
-          
-
                 <TextInput
                     placeholder="Phone"
                     placeholderTextColor="rgba(255,255,255,0.6)"
@@ -230,7 +220,20 @@ export default function RegisterScreen({ navigation }: Props) {
                   </TouchableOpacity>
                 </View>
 
-       
+              <View style={styles.pickerContainer}>
+                  <Text style={styles.pickerLabel}>Gender</Text>
+                  <Picker
+                      selectedValue={form.gender}
+                      onValueChange={(itemValue) => handleChange("gender", itemValue)}
+                      style={styles.picker}
+                      dropdownIconColor="#ccc"
+                  >
+                      <Picker.Item label="Select Gender" value="" style={styles.pickerItem} />
+                      <Picker.Item label="Male" value="Male" style={styles.pickerItem} />
+                      <Picker.Item label="Female" value="Female" style={styles.pickerItem} />
+                      <Picker.Item label="Other" value="Other" style={styles.pickerItem} />
+                  </Picker>
+              </View>
 
                 
                 {role === "User" ? (
