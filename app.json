@@ -1,30 +1,83 @@
 {
   "expo": {
     "name": "plan-am-well",
-    "slug": "plan-am-well",
+    "slug": "planamwell",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/plan.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "splash": {
-      "image": "./assets/splash-icon.png",
+      "image": "./assets/plan.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
+    "scheme": "planamwell",
+    "jsEngine": "hermes",
+    "runtimeVersion": "1.0.0",
+    "extra": {
+      "eas": {
+        "projectId": "f5ccb20a-f024-4c39-9030-97d34b2ecad7"
+      },
+      "apiUrl": "https://planamwell.onrender.com",
+      "router": {}
+    },
+    "updates": {
+      "enabled": true,
+      "checkAutomatically": "ON_LOAD",
+      "fallbackToCacheTimeout": 0
+    },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.zionnaire.planamwell",
+      "infoPlist": {
+        "NSSpeechRecognitionUsageDescription": "We need access to your microphone to convert your voice to text.",
+        "NSMicrophoneUsageDescription": "We need access to your microphone to record your voice input.",
+        "NSUserTrackingUsageDescription": "This identifier will be used to deliver personalized ads to you.",
+        "SKAdNetworkItems": [
+          {
+            "SKAdNetworkIdentifier": "v9wttpbfk9.skadnetwork"
+          },
+          {
+            "SKAdNetworkIdentifier": "n38lu8286q.skadnetwork"
+          }
+        ]
+      }
     },
     "android": {
+      "package": "com.zionnaire.planamwell",
+      "versionCode": 1,
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/plan.png",
         "backgroundColor": "#ffffff"
       },
-      "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
+      "permissions": [
+        "RECORD_AUDIO",
+        "INTERNET",
+        "VIBRATE",
+        "android.permission.RECORD_AUDIO"
+      ],
+      "softwareKeyboardLayoutMode": "pan"
     },
+    "plugins": [
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            // FIX: Updated to 35 to resolve AAR Metadata Check failures.
+            "compileSdkVersion": 35, 
+            "targetSdkVersion": 35,
+            "buildToolsVersion": "34.0.0"
+          }
+        }
+      ],
+      "expo-web-browser",
+      "expo-speech-recognition",
+      "expo-router"
+    ],
     "web": {
-      "favicon": "./assets/favicon.png"
-    }
+      "favicon": "./assets/plan.png"
+    },
+    "owner": "ademolaahfid"
   }
 }
