@@ -177,6 +177,21 @@ export default function RegisterScreen({ navigation }: Props) {
                     style={styles.input}
                 />
 
+   
+                  <Text style={styles.pickerLabel}>Gender</Text>
+                  <Picker
+                      selectedValue={form.gender}
+                      onValueChange={(itemValue) => handleChange("gender", itemValue)}
+                      style={styles.picker}
+                      dropdownIconColor="#ccc"
+                  >
+                      <Picker.Item label="Select Gender" value="" style={styles.pickerItem} />
+                      <Picker.Item label="Male" value="Male" style={styles.pickerItem} />
+                      <Picker.Item label="Female" value="Female" style={styles.pickerItem} />
+                      <Picker.Item label="Other" value="Other" style={styles.pickerItem} />
+                  </Picker>
+          
+
                 <TextInput
                     placeholder="Phone"
                     placeholderTextColor="rgba(255,255,255,0.6)"
@@ -215,20 +230,7 @@ export default function RegisterScreen({ navigation }: Props) {
                   </TouchableOpacity>
                 </View>
 
-              <View style={styles.pickerContainer}>
-                  <Text style={styles.pickerLabel}>Gender</Text>
-                  <Picker
-                      selectedValue={form.gender}
-                      onValueChange={(itemValue) => handleChange("gender", itemValue)}
-                      style={styles.picker}
-                      dropdownIconColor="#ccc"
-                  >
-                      <Picker.Item label="Select Gender" value="" style={styles.pickerItem} />
-                      <Picker.Item label="Male" value="Male" style={styles.pickerItem} />
-                      <Picker.Item label="Female" value="Female" style={styles.pickerItem} />
-                      <Picker.Item label="Other" value="Other" style={styles.pickerItem} />
-                  </Picker>
-              </View>
+       
 
                 
                 {role === "User" ? (
