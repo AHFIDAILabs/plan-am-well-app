@@ -8,13 +8,13 @@ WebBrowser.maybeCompleteAuthSession();
 
 const API_BASE_URL = process.env.EXPO_BASE_URL;
 const WEB_CLIENT_ID =
-  process.env.EXPO_GOOGLE_WEB_CLIENT_ID ||
+  process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID ||
   "357562099421-3arlng9efmu9j1o2m44e6tg8ov8tpni6.apps.googleusercontent.com";
 const IOS_CLIENT_ID =
-  process.env.IOS_CLIENT_ID ||
+  process.env.EXPO_PUBLIC_IOS_CLIENT_ID ||
   "357562099421-ts15vf1jhev5bfuk8ntuv7d61c7o6vbb.apps.googleusercontent.com";
 const ANDROID_CLIENT_ID =
-  process.env.ANDROID_CLIENT_ID ||
+  process.env.EXPO_PUBLIC_ANDROID_CLIENT_ID ||
   "357562099421-rpj2ujttvq112g0qmu3d37kkdqn1pi1d.apps.googleusercontent.com";
 
 if (!WEB_CLIENT_ID || !IOS_CLIENT_ID || !ANDROID_CLIENT_ID) {
