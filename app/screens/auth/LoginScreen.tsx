@@ -5,7 +5,6 @@ import {
   TextInput,
   TouchableOpacity,
   ActivityIndicator,
-  Alert,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
@@ -18,9 +17,9 @@ import { LinearGradient } from "expo-linear-gradient";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { AuthStackParamList } from "../../navigation/AuthStack";
 import { useAuth } from "../../context/AuthContext";
-import { Ionicons } from "@expo/vector-icons";
-import { FontAwesome } from "@expo/vector-icons";
+import { Ionicons, FontAwesome } from "@expo/vector-icons";
 import { signInWithGoogle } from "../../services/GoogleAuthService";
+import Toast from "react-native-toast-message";
 
 type Props = NativeStackScreenProps<AuthStackParamList, "Login">;
 
@@ -38,8 +37,18 @@ export default function LoginScreen({ navigation }: Props) {
 
   useEffect(() => {
     Animated.parallel([
-      Animated.timing(slideAnim, { toValue: 0, duration: 800, easing: Easing.out(Easing.exp), useNativeDriver: true }),
-      Animated.timing(fadeAnim, { toValue: 1, duration: 1000, easing: Easing.inOut(Easing.ease), useNativeDriver: true }),
+      Animated.timing(slideAnim, {
+        toValue: 0,
+        duration: 800,
+        easing: Easing.out(Easing.exp),
+        useNativeDriver: true,
+      }),
+      Animated.timing(fadeAnim, {
+        toValue: 1,
+        duration: 1000,
+        easing: Easing.inOut(Easing.ease),
+        useNativeDriver: true,
+      }),
     ]).start();
   }, []);
 
@@ -48,8 +57,16 @@ export default function LoginScreen({ navigation }: Props) {
     setEmailError(""); 
     setPasswordError("");
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) { setEmailError("Enter valid email"); valid = false; }
-    if (password.length < 6) { setPasswordError("Password min 6 chars"); valid = false; }
+    if (!emailRegex.test(email)) { 
+      setEmailError("Enter valid email"); 
+      valid = false; 
+      Toast.show({ type: "error", text1: "Enter valid email" });
+    }
+    if (password.length < 6) { 
+      setPasswordError("Password must be at least 6 chars"); 
+      valid = false; 
+      Toast.show({ type: "error", text1: "Password must be at least 6 chars" });
+    }
     return valid;
   };
 
@@ -57,30 +74,39 @@ export default function LoginScreen({ navigation }: Props) {
     if (!validateInputs()) return;
     try {
       await login(email, password);
+      Toast.show({ type: "success", text1: "Logged in successfully" });
     } catch (err: any) {
-      Alert.alert("Login Failed", err?.response?.data?.message || "Invalid credentials");
+      Toast.show({
+        type: "error",
+        text1: "Login Failed",
+        text2: err?.response?.data?.message || "Invalid credentials",
+      });
     }
   };
 
   const handleGoogleSignIn = async () => {
     setIsSocialLoading(true);
     try {
-      const result = await signInWithGoogle("user"); // or "doctor" based on role
+      const result = await signInWithGoogle("user"); // adjust role if needed
       if (result) {
         setAuthTokens(result.tokens.accessToken, result.tokens.refreshToken);
         setUser(result.user);
+        Toast.show({ type: "success", text1: "Logged in with Google" });
       } else {
-        Alert.alert("Canceled", "Google sign-in was not completed.");
+        Toast.show({ type: "error", text1: "Google sign-in canceled" });
       }
     } catch (err: any) {
-      Alert.alert("Sign-In Failed", err.message || "Google auth failed.");
+      Toast.show({ type: "error", text1: "Google sign-in failed", text2: err.message });
     } finally {
       setIsSocialLoading(false);
     }
   };
 
   return (
-    <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={{ flex: 1 }}>
+    <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      style={{ flex: 1 }}
+    >
       <LinearGradient colors={["#1a1f2b","#121212","#0a0a0a"]} style={{ flex:1 }}>
         <ImageBackground source={require("../../../assets/splash.jpg")} resizeMode="cover" style={{ flex: 1 }} imageStyle={{ opacity: 0.08 }}>
           <View style={styles.topSection}>
@@ -88,11 +114,10 @@ export default function LoginScreen({ navigation }: Props) {
             <Text style={styles.subtitle}>Welcome Back 👋</Text>
           </View>
 
-          <Animated.View style={[styles.formCard,{opacity: fadeAnim, transform: [{translateY: slideAnim}]}]}>
+          <Animated.View style={[styles.formCard, {opacity: fadeAnim, transform: [{translateY: slideAnim}]}]}>
             <LinearGradient colors={["rgba(255,255,255,0.15)","rgba(255,255,255,0.05)"]} style={styles.glassBackground}>
               <ScrollView contentContainerStyle={{ paddingBottom: 40 }} keyboardShouldPersistTaps="handled">
-                
-               
+
                 <TextInput
                   placeholder="Email"
                   placeholderTextColor="rgba(255,255,255,0.6)"
@@ -104,7 +129,6 @@ export default function LoginScreen({ navigation }: Props) {
                 />
                 {emailError ? <Text style={styles.errorText}>{emailError}</Text> : null}
 
-               
                 <View style={{ position: "relative" }}>
                   <TextInput
                     placeholder="Password"
@@ -120,14 +144,12 @@ export default function LoginScreen({ navigation }: Props) {
                 </View>
                 {passwordError ? <Text style={styles.errorText}>{passwordError}</Text> : null}
 
-                
                 <TouchableOpacity disabled={loading || isSocialLoading} onPress={handleLogin} style={[styles.button, (loading || isSocialLoading) && { opacity: 0.7 }]}>
                   <LinearGradient colors={["#00f5d4","#00bbf9","#4361ee"]} style={styles.buttonGradient}>
                     {loading ? <ActivityIndicator color="#fff" /> : <Text style={styles.buttonText}>Login</Text>}
                   </LinearGradient>
                 </TouchableOpacity>
 
-                
                 <View style={styles.socialContainer}>
                   <Text style={styles.socialDivider}>or continue with</Text>
                   <View style={styles.socialButtons}>
@@ -137,7 +159,6 @@ export default function LoginScreen({ navigation }: Props) {
                   </View>
                 </View>
 
-               
                 <TouchableOpacity onPress={() => navigation.navigate("Register")} style={styles.registerContainer}>
                   <Text style={styles.registerText}>
                     Don’t have an account? <Text style={styles.registerLink}>Register</Text>
@@ -149,6 +170,7 @@ export default function LoginScreen({ navigation }: Props) {
           </Animated.View>
         </ImageBackground>
       </LinearGradient>
+      <Toast />
     </KeyboardAvoidingView>
   );
 }

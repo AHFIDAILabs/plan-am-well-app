@@ -6,7 +6,6 @@ import {
   TouchableOpacity,
   ScrollView,
   ActivityIndicator,
-  Alert,
   KeyboardAvoidingView,
   Platform,
   StyleSheet,
@@ -23,7 +22,7 @@ import { RegisterPayload } from "../../types/AuthType";
 import { Ionicons, FontAwesome } from "@expo/vector-icons";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { Picker } from "@react-native-picker/picker";
-import * as Updates from "expo-updates";
+import Toast from "react-native-toast-message";
 import { signInWithGoogle } from "../../services/GoogleAuthService";
 
 const { height, width } = Dimensions.get("window");
@@ -54,10 +53,6 @@ export default function RegisterScreen({ navigation }: Props) {
     bio: "",
   });
 
-  useEffect(() => {
-    console.log("Gender value:", form.gender);
-  }, [form.gender]);
-
   const slideAnim = useRef(new Animated.Value(400)).current;
   const fadeAnim = useRef(new Animated.Value(0)).current;
 
@@ -83,18 +78,50 @@ export default function RegisterScreen({ navigation }: Props) {
 
   const handleDateChange = (event: any, selectedDate?: Date) => {
     setShowDatePicker(false);
-    if (selectedDate) handleChange("dob", selectedDate.toISOString().split("T")[0]);
+    if (selectedDate)
+      handleChange("dob", selectedDate.toISOString().split("T")[0]);
+  };
+
+  const validateForm = () => {
+    if (!form.firstName || !form.lastName) {
+      Toast.show({ type: "error", text1: "Name required" });
+      return false;
+    }
+    if (!form.email) {
+      Toast.show({ type: "error", text1: "Email is required" });
+      return false;
+    }
+    if (!form.password || !form.confirmPassword) {
+      Toast.show({ type: "error", text1: "Password & Confirm Password required" });
+      return false;
+    }
+    if (form.password !== form.confirmPassword) {
+      Toast.show({ type: "error", text1: "Passwords do not match" });
+      return false;
+    }
+    if (!form.gender) {
+      Toast.show({ type: "error", text1: "Please select your gender" });
+      return false;
+    }
+    if (role === "User" && !form.dob) {
+      Toast.show({ type: "error", text1: "Please select Date of Birth" });
+      return false;
+    }
+    if (role === "Doctor") {
+      if (!form.specialization) {
+        Toast.show({ type: "error", text1: "Specialization required" });
+        return false;
+      }
+      if (!form.qualifications) {
+        Toast.show({ type: "error", text1: "Qualifications required" });
+        return false;
+      }
+    }
+    return true;
   };
 
   const handleRegister = async () => {
-    if (!form.email || !form.password || !form.confirmPassword)
-      return Alert.alert("Missing fields", "Please fill all required fields");
-
-    if (form.password !== form.confirmPassword)
-      return Alert.alert("Password mismatch", "Passwords do not match");
-
-    if (!form.gender || form.gender === "")
-      return Alert.alert("Missing field", "Please select your gender.");
+    if (!validateForm()) return;
 
     try {
       const payload: RegisterPayload = {
@@ -106,8 +133,14 @@ export default function RegisterScreen({ navigation }: Props) {
             : undefined,
       };
       await register(payload);
+      Toast.show({ type: "success", text1: "Registered successfully" });
+      navigation.navigate("Login");
     } catch (err: any) {
-      Alert.alert("Registration failed", err?.response?.data?.message || "Something went wrong");
+      Toast.show({
+        type: "error",
+        text1: "Registration failed",
+        text2: err?.response?.data?.message || "Something went wrong",
+      });
     }
   };
 
@@ -118,11 +151,12 @@ export default function RegisterScreen({ navigation }: Props) {
       if (result) {
         setAuthTokens(result.tokens.accessToken, result.tokens.refreshToken);
         setUser(result.user);
+        Toast.show({ type: "success", text1: "Logged in with Google" });
       } else {
-        Alert.alert("Canceled", "Google sign-in was not completed.");
+        Toast.show({ type: "error", text1: "Google sign-in canceled" });
       }
     } catch (err: any) {
-      Alert.alert("Sign-In Failed", err.message || "Google auth failed.");
+      Toast.show({ type: "error", text1: "Google sign-in failed", text2: err.message });
     } finally {
       setIsSocialLoading(false);
     }
@@ -167,26 +201,25 @@ export default function RegisterScreen({ navigation }: Props) {
                   ))}
                 </View>
 
-                {/* First + Last Name */}
-                <View style={styles.inputRow}>
-                  <TextInput
-                    placeholder="First Name"
-                    placeholderTextColor="rgba(255,255,255,0.6)"
-                    autoCapitalize="sentences"
-                    value={form.firstName}
-                    onChangeText={(v) => handleChange("firstName", v)}
-                    style={[styles.input, styles.halfInput, { marginBottom: 0 }]}
-                  />
-                  <TextInput
-                    placeholder="Last Name"
-                    placeholderTextColor="rgba(255,255,255,0.6)"
-                    autoCapitalize="sentences"
-                    value={form.lastName}
-                    onChangeText={(v) => handleChange("lastName", v)}
-                    style={[styles.input, styles.halfInput, { marginBottom: 0 }]}
-                  />
-                </View>
+                {/* Names */}
+                <TextInput
+                  placeholder="First Name"
+                  placeholderTextColor="rgba(255,255,255,0.6)"
+                  autoCapitalize="sentences"
+                  value={form.firstName}
+                  onChangeText={(v) => handleChange("firstName", v)}
+                  style={[styles.input, styles.halfInput]}
+                />
+                <TextInput
+                  placeholder="Last Name"
+                  placeholderTextColor="rgba(255,255,255,0.6)"
+                  autoCapitalize="sentences"
+                  value={form.lastName}
+                  onChangeText={(v) => handleChange("lastName", v)}
+                  style={[styles.input, styles.halfInput]}
+                />
 
+                {/* Email & Phone */}
                 <TextInput
                   placeholder="Email"
                   placeholderTextColor="rgba(255,255,255,0.6)"
@@ -196,7 +229,6 @@ export default function RegisterScreen({ navigation }: Props) {
                   onChangeText={(v) => handleChange("email", v)}
                   style={styles.input}
                 />
-
                 <TextInput
                   placeholder="Phone"
                   placeholderTextColor="rgba(255,255,255,0.6)"
@@ -206,7 +238,7 @@ export default function RegisterScreen({ navigation }: Props) {
                   style={styles.input}
                 />
 
-                {/* ✅ Fixed Gender Picker */}
+                {/* Gender */}
                 <View style={styles.pickerContainer}>
                   <Text style={styles.pickerLabel}>Gender</Text>
                   <Picker
@@ -230,12 +262,9 @@ export default function RegisterScreen({ navigation }: Props) {
                     secureTextEntry={!showPassword}
                     value={form.password}
                     onChangeText={(v) => handleChange("password", v)}
-                    style={[styles.input, { flex: 1, marginBottom: 0 }]}
+                    style={[styles.input, { flex: 1 }]}
                   />
-                  <TouchableOpacity
-                    onPress={() => setShowPassword((prev) => !prev)}
-                    style={styles.eyeIcon}
-                  >
+                  <TouchableOpacity onPress={() => setShowPassword(!showPassword)} style={styles.eyeIcon}>
                     <Ionicons name={showPassword ? "eye" : "eye-off"} size={22} color="#ccc" />
                   </TouchableOpacity>
                 </View>
@@ -247,18 +276,18 @@ export default function RegisterScreen({ navigation }: Props) {
                     secureTextEntry={!showConfirmPassword}
                     value={form.confirmPassword}
                     onChangeText={(v) => handleChange("confirmPassword", v)}
-                    style={[styles.input, { flex: 1, marginBottom: 0 }]}
+                    style={[styles.input, { flex: 1 }]}
                   />
                   <TouchableOpacity
-                    onPress={() => setShowConfirmPassword((prev) => !prev)}
+                    onPress={() => setShowConfirmPassword(!showConfirmPassword)}
                     style={styles.eyeIcon}
                   >
                     <Ionicons name={showConfirmPassword ? "eye" : "eye-off"} size={22} color="#ccc" />
                   </TouchableOpacity>
                 </View>
 
-                {/* User vs Doctor Fields */}
-                {role === "User" ? (
+                {/* User Fields */}
+                {role === "User" && (
                   <>
                     <TouchableOpacity style={styles.input} onPress={() => setShowDatePicker(true)}>
                       <Text style={{ color: form.dob ? "#fff" : "rgba(255,255,255,0.6)" }}>
@@ -281,7 +310,10 @@ export default function RegisterScreen({ navigation }: Props) {
                       style={styles.input}
                     />
                   </>
-                ) : (
+                )}
+
+                {/* Doctor Fields */}
+                {role === "Doctor" && (
                   <>
                     <TextInput
                       placeholder="Specialization"
@@ -317,15 +349,13 @@ export default function RegisterScreen({ navigation }: Props) {
                   </>
                 )}
 
+                {/* Register Button */}
                 <TouchableOpacity
                   disabled={loading || isSocialLoading}
                   onPress={handleRegister}
                   style={[styles.button, (loading || isSocialLoading) && { opacity: 0.7 }]}
                 >
-                  <LinearGradient
-                    colors={["#00f5d4", "#00bbf9", "#4361ee"]}
-                    style={styles.buttonGradient}
-                  >
+                  <LinearGradient colors={["#00f5d4", "#00bbf9", "#4361ee"]} style={styles.buttonGradient}>
                     {loading ? (
                       <ActivityIndicator color="#fff" />
                     ) : (
@@ -336,6 +366,7 @@ export default function RegisterScreen({ navigation }: Props) {
                   </LinearGradient>
                 </TouchableOpacity>
 
+                {/* Social Sign-In */}
                 <View style={styles.socialContainer}>
                   <Text style={styles.orText}>or sign up with</Text>
                   <View style={styles.socialRow}>
@@ -353,10 +384,8 @@ export default function RegisterScreen({ navigation }: Props) {
                   </View>
                 </View>
 
-                <TouchableOpacity
-                  onPress={() => navigation.navigate("Login")}
-                  style={styles.loginContainer}
-                >
+                {/* Login link */}
+                <TouchableOpacity onPress={() => navigation.navigate("Login")} style={styles.loginContainer}>
                   <Text style={styles.loginText}>
                     Already have an account? <Text style={styles.loginLink}>Login</Text>
                   </Text>
@@ -366,72 +395,29 @@ export default function RegisterScreen({ navigation }: Props) {
           </Animated.View>
         </ImageBackground>
       </LinearGradient>
+      <Toast />
     </KeyboardAvoidingView>
   );
 }
 
 const styles = StyleSheet.create({
-  gradientBackground: { flex: 1 },
   topSection: { flex: 0.25, justifyContent: "flex-end", alignItems: "center", paddingBottom: 30 },
   brandTitle: { fontSize: 34, fontWeight: "800", color: "#fff" },
   subtitle: { fontSize: 20, color: "#ccc", marginTop: 6 },
   formCard: { flex: 0.75, borderTopLeftRadius: 30, borderTopRightRadius: 30, overflow: "hidden" },
-  glassBackground: {
-    flex: 1,
-    padding: 24,
-    borderRadius: 30,
-    borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.15)",
-  },
-  roleSwitchContainer: {
-    flexDirection: "row",
-    backgroundColor: "rgba(255,255,255,0.15)",
-    borderRadius: 10,
-    marginBottom: 20,
-  },
+  glassBackground: { flex: 1, padding: 24, borderRadius: 30, borderWidth: 1, borderColor: "rgba(255,255,255,0.15)" },
+  roleSwitchContainer: { flexDirection: "row", backgroundColor: "rgba(255,255,255,0.15)", borderRadius: 10, marginBottom: 20 },
   roleButton: { flex: 1, paddingVertical: 12, alignItems: "center" },
   roleButtonActive: { backgroundColor: "rgba(255,255,255,0.3)" },
   roleText: { color: "#fff", fontWeight: "600" },
   roleTextActive: { color: "#00f5d4" },
-
-  input: {
-    backgroundColor: "rgba(255,255,255,0.05)",
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 12,
-    color: "#fff",
-  },
-  inputRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginBottom: 10,
-  },
-  halfInput: { width: "48.5%", marginBottom: 0, padding: 14 },
-
+  input: { backgroundColor: "rgba(255,255,255,0.05)", borderRadius: 12, padding: 16, marginBottom: 12, color: "#fff" },
+  halfInput: { width: "48.5%", marginBottom: 12 },
   passwordContainer: { flexDirection: "row", alignItems: "center", marginBottom: 12 },
   eyeIcon: { position: "absolute", right: 15, top: 18 },
-
-  pickerContainer: {
-    backgroundColor: "rgba(255,255,255,0.05)",
-    borderRadius: 12,
-    marginBottom: 12,
-    paddingHorizontal: 16,
-    minHeight: 50,
-    justifyContent: "center",
-  },
-  pickerLabel: {
-    color: "rgba(255,255,255,0.6)",
-    fontSize: 12,
-    position: "absolute",
-    top: 6,
-    left: 18,
-    zIndex: 1,
-  },
-  picker: {
-    height: 50,
-    color: "#fff",
-  },
-
+  pickerContainer: { backgroundColor: "rgba(255,255,255,0.05)", borderRadius: 12, marginBottom: 12, paddingHorizontal: 16, minHeight: 50, justifyContent: "center" },
+  pickerLabel: { color: "rgba(255,255,255,0.6)", fontSize: 12, position: "absolute", top: 6, left: 18, zIndex: 1 },
+  picker: { height: 50, color: "#fff" },
   button: { borderRadius: 12, overflow: "hidden", marginTop: 14 },
   buttonGradient: { paddingVertical: 16, borderRadius: 12, alignItems: "center" },
   buttonText: { color: "#fff", fontSize: 18, fontWeight: "700" },

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -12,9 +12,8 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
-import BottomNavBar from "../components/layout/BottomNavBar";
-import { useAuth } from "../context/AuthContext";
 import AppLayout from "../components/AppLayout";
+import { useAuth } from "../context/AuthContext";
 import FindClinicSection from "../components/home/FindClinicSection";
 import AdvocacySection from "../components/home/AdvocacySection";
 import BookADoctorSection from "../components/home/BookDoctorSection";
@@ -22,7 +21,7 @@ import HealthRecordsSection from "../components/home/HealthRecordsSection";
 import MessagesSection from "../components/home/MessagesSection";
 import FloatingAskAmWell from "../components/home/FloatingAskAmWell";
 import ProductSlider from "../components/home/OrderProductSection";
-
+import { TopDoctorSection } from "../components/home/TopDoctorSection";
 
 export default function HomeScreen({ navigation }: any) {
   const { user } = useAuth();
@@ -35,36 +34,35 @@ export default function HomeScreen({ navigation }: any) {
     { key: "ambulance", label: "Ambulance", icon: "car-outline", color: "#ef4444" },
   ];
 
-const topDoctors = [
-    { 
-        _id: "doc1", // Required by Mongoose User/Doctor type
-        name: "Dr. Dexter", 
-        specialty: "Cardiologist", 
-        distance: "500m away",
-        rating: 4.8, // Required by ListDoctor type
-        specialization: "Cardiologist", // Required by Doctor schema
-        avatar: { url: 'https://i.pravatar.cc/100?img=1' }, // Required by Doctor schema
-        // You would typically include other Doctor type fields here
+  const topDoctors = [
+    { 
+      _id: "doc1",
+      name: "Dr. Kunle Kakanfo",
+      specialty: "Cardiologist",
+      distance: "500m away",
+      rating: 4.8,
+      specialization: "Cardiologist",
+      avatar: { url: "https://i.pravatar.cc/100?img=1" },
     },
-    { 
-        _id: "doc2",
-        name: "Dr. Lisa", 
-        specialty: "Psychologist", 
-        distance: "1.5km away",
-        rating: 4.5,
-        specialization: "Psychologist", 
-        avatar: { url: 'https://i.pravatar.cc/100?img=2' },
+    { 
+      _id: "doc2",
+      name: "Dr. Chichi",
+      specialty: "Psychologist",
+      distance: "1.5km away",
+      rating: 4.5,
+      specialization: "Psychologist",
+      avatar: { url: "https://i.pravatar.cc/100?img=2" },
     },
-    { 
-        _id: "doc3",
-        name: "Dr. John", 
-        specialty: "Orthopedist", 
-        distance: "2km away",
-        rating: 4.2,
-        specialization: "Orthopedist",
-        avatar: { url: 'https://i.pravatar.cc/100?img=3' },
+    { 
+      _id: "doc3",
+      name: "Dr. Wale",
+      specialty: "Orthopedist",
+      distance: "2km away",
+      rating: 4.2,
+      specialization: "Orthopedist",
+      avatar: { url: "https://i.pravatar.cc/100?img=3" },
     },
-];
+  ];
 
   const healthArticles = [
     { id: "a1", title: "How to maintain a healthy heart", category: "Health Tips" },
@@ -73,136 +71,94 @@ const topDoctors = [
 
   return (
     <AppLayout>
-    <SafeAreaView style={styles.safe}>
-      <ScrollView
-        contentContainerStyle={styles.container}
-        showsVerticalScrollIndicator={false}
-      >
-       
-        <View style={styles.headerRow}>
-          <View>
-            <Text style={styles.headerTitle}>Find your desired</Text>
-            <Text style={styles.headerSubtitle}>health solution</Text>
-          </View>
-          <TouchableOpacity style={styles.notifBtn}>
-            <Ionicons name="notifications-outline" size={22} color="#000" />
-          </TouchableOpacity>
-        </View>
-
-       
-        <View style={styles.searchBar}>
-          <Ionicons name="search-outline" size={20} color="#888" style={{ marginRight: 6 }} />
-          <TextInput
-            placeholder="Search doctor, articles..."
-            placeholderTextColor="#999"
-            style={styles.searchInput}
-            value={search}
-            onChangeText={setSearch}
-          />
-        </View>
-
-      
-        <View style={styles.categoryRow}>
-          {categories.map((item) => (
-            <TouchableOpacity
-              key={item.key}
-              style={styles.categoryCard}
-              onPress={() => navigation.navigate(item.key)}
-            >
-              <View
-                style={[styles.categoryIcon, { backgroundColor: `${item.color}20` }]}
-              >
-                <Ionicons name={item.icon as any} size={22} color={item.color} />
-              </View>
-              <Text style={styles.categoryLabel}>{item.label}</Text>
-            </TouchableOpacity>
-          ))}
-        </View>
-
-        
-        <LinearGradient
-          colors={["#4facfe", "#00f2fe"]}
-          style={styles.bannerCard}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 0 }}
+      <SafeAreaView style={styles.safe}>
+        <ScrollView
+          contentContainerStyle={styles.container}
+          showsVerticalScrollIndicator={false}
         >
-          <View style={{ flex: 1 }}>
-            <Text style={styles.bannerText}>
-              Early protection for your family health
-            </Text>
-            <TouchableOpacity style={styles.learnMoreBtn}>
-              <Text style={styles.learnMoreText}>Learn more</Text>
+          {/* Header */}
+          <View style={styles.headerRow}>
+            <View>
+              <Text style={styles.headerTitle}>Find your desired</Text>
+              <Text style={styles.headerSubtitle}>health solution</Text>
+            </View>
+            <TouchableOpacity style={styles.notifBtn}>
+              <Ionicons name="notifications-outline" size={22} color="#000" />
             </TouchableOpacity>
           </View>
-          <Image
-            source={require("../../assets/splash_2.jpg")}
-            style={styles.bannerImage}
-            resizeMode="cover"
-          />
-        </LinearGradient>
 
-        <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>Top Doctor</Text>
-          <TouchableOpacity >
-            <Text style={styles.seeAll}>See all</Text>
-          </TouchableOpacity>
-        </View>
+          {/* Search Bar */}
+          <View style={styles.searchBar}>
+            <Ionicons name="search-outline" size={20} color="#888" style={{ marginRight: 6 }} />
+            <TextInput
+              placeholder="Search doctor, articles..."
+              placeholderTextColor="#999"
+              style={styles.searchInput}
+              value={search}
+              onChangeText={setSearch}
+            />
+          </View>
 
-        <FlatList
-          data={topDoctors}
-          keyExtractor={(item) => item._id}
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={{ paddingVertical: 6 }}
-          renderItem={({ item }) => (
-            <TouchableOpacity style={styles.doctorCard}>
-              <Image
-                source={require("../../assets/splash_1.jpg")}
-                style={styles.doctorImage}
-              />
-              <Text style={styles.doctorName}>{item.name}</Text>
-              <Text style={styles.doctorSpec}>{item.specialty}</Text>
-              <Text style={styles.doctorDistance}>{item.distance}</Text>
-            </TouchableOpacity>
-          )}
-        />
+          {/* Categories */}
+          <View style={styles.categoryRow}>
+            {categories.map((item) => (
+              <TouchableOpacity
+                key={item.key}
+                style={styles.categoryCard}
+                onPress={() => navigation.navigate(item.key)}
+              >
+                <View
+                  style={[styles.categoryIcon, { backgroundColor: `${item.color}20` }]}
+                >
+                  <Ionicons name={item.icon as any} size={22} color={item.color} />
+                </View>
+                <Text style={styles.categoryLabel}>{item.label}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
 
-        <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>Health article</Text>
-          <TouchableOpacity>
-            <Text style={styles.seeAll}>See all</Text>
-          </TouchableOpacity>
-        </View>
-
-        {healthArticles.map((item) => (
-          <TouchableOpacity key={item.id} style={styles.articleCard}>
-            <View style={styles.articleIcon}>
-              <Ionicons name="newspaper-outline" size={20} color="#3b82f6" />
-            </View>
+          {/* Banner */}
+          <LinearGradient
+            colors={["#4facfe", "#00f2fe"]}
+            style={styles.bannerCard}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 0 }}
+          >
             <View style={{ flex: 1 }}>
-              <Text style={styles.articleTitle}>{item.title}</Text>
-              <Text style={styles.articleCategory}>{item.category}</Text>
+              <Text style={styles.bannerText}>
+                Early protection for your family health
+              </Text>
+              <TouchableOpacity style={styles.learnMoreBtn}>
+                <Text style={styles.learnMoreText}>Learn more</Text>
+              </TouchableOpacity>
             </View>
-          </TouchableOpacity>
-        ))}
-        
-        <FloatingAskAmWell />
-        <FindClinicSection />
-        <AdvocacySection onViewAll={() => navigation.navigate("AdvocacyPrograms")} />
-        <BookADoctorSection onViewAll={() => navigation.navigate("BookDoctor")} />
-<ProductSlider
-    onViewAll={() => navigation.navigate("Pharmacy")} 
-    onOrder={function (productId: string, quantity: number): void { 
-        /* handle order logic here */ 
-    }}
-/>
-        <HealthRecordsSection   onViewAll={() => navigation.navigate("HealthRecords")} />
-        <MessagesSection onViewAll={() => navigation.navigate("Messages")} />
-        
+            <Image
+              source={require("../../assets/splash_2.jpg")}
+              style={styles.bannerImage}
+              resizeMode="cover"
+            />
+          </LinearGradient>
 
-      </ScrollView>
+          {/* Top Doctors (Dynamic Section) */}
+          <TopDoctorSection
+            doctors={topDoctors}
+            onViewAll={() => navigation.navigate("FindDoctorScreen")}
+            onDoctorPress={(id) => navigation.navigate("UserProfile", { userId: id })}
+          />
 
-    </SafeAreaView>
+          {/* Other sections */}
+          <FindClinicSection />
+          <AdvocacySection onViewAll={() => navigation.navigate("AdvocacyPrograms")} />
+          <BookADoctorSection onViewAll={() => navigation.navigate("BookDoctor")} />
+          <ProductSlider
+            onViewAll={() => navigation.navigate("Pharmacy")}
+            onOrder={(productId, quantity) => console.log("Order", productId, quantity)}
+          />
+          <HealthRecordsSection onViewAll={() => navigation.navigate("HealthRecords")} />
+          <MessagesSection onViewAll={() => navigation.navigate("Messages")} />
+          <FloatingAskAmWell />
+        </ScrollView>
+      </SafeAreaView>
     </AppLayout>
   );
 }
@@ -211,115 +167,19 @@ const topDoctors = [
 const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: "#fff" },
   container: { padding: 16, paddingBottom: 100 },
-
-  headerRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 16,
-  },
+  headerRow: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 16 },
   headerTitle: { fontSize: 20, fontWeight: "700", color: "#111" },
   headerSubtitle: { fontSize: 20, fontWeight: "700", color: "#111" },
-  notifBtn: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    backgroundColor: "#f5f5f5",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-
-  searchBar: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#f5f5f5",
-    borderRadius: 12,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    marginBottom: 20,
-  },
+  notifBtn: { width: 36, height: 36, borderRadius: 18, backgroundColor: "#f5f5f5", alignItems: "center", justifyContent: "center" },
+  searchBar: { flexDirection: "row", alignItems: "center", backgroundColor: "#f5f5f5", borderRadius: 12, paddingHorizontal: 12, paddingVertical: 8, marginBottom: 20 },
   searchInput: { flex: 1, fontSize: 14, color: "#111" },
-
-  categoryRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginBottom: 24,
-  },
+  categoryRow: { flexDirection: "row", justifyContent: "space-between", marginBottom: 24 },
   categoryCard: { alignItems: "center" },
-  categoryIcon: {
-    width: 54,
-    height: 54,
-    borderRadius: 14,
-    alignItems: "center",
-    justifyContent: "center",
-    marginBottom: 6,
-  },
+  categoryIcon: { width: 54, height: 54, borderRadius: 14, alignItems: "center", justifyContent: "center", marginBottom: 6 },
   categoryLabel: { fontSize: 12, fontWeight: "600", color: "#111" },
-
-  bannerCard: {
-    flexDirection: "row",
-    borderRadius: 18,
-    padding: 18,
-    alignItems: "center",
-    marginBottom: 24,
-    
-  },
-  bannerText: { color: "#fff", fontSize: 16, fontWeight: "700", flex: 1, alignItems: "center", justifyContent: "center"  },
-  learnMoreBtn: {
-    backgroundColor: "#fff",
-    borderRadius: 10,
-    paddingVertical: 6,
-    paddingHorizontal: 14,
-    marginTop: 10,
-    alignSelf: "flex-start",
-  },
+  bannerCard: { flexDirection: "row", borderRadius: 18, padding: 18, alignItems: "center", marginBottom: 24 },
+  bannerText: { color: "#fff", fontSize: 16, fontWeight: "700", flex: 1 },
+  learnMoreBtn: { backgroundColor: "#fff", borderRadius: 10, paddingVertical: 6, paddingHorizontal: 14, marginTop: 10, alignSelf: "flex-start" },
   learnMoreText: { color: "#0077b6", fontWeight: "600" },
-  bannerImage: { width: 140, height: 140, marginLeft: 0 },
-
-  sectionHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 10,
-  },
-  sectionTitle: { fontSize: 16, fontWeight: "700", color: "#111" },
-  seeAll: { fontSize: 13, color: "#0077b6", fontWeight: "500" },
-
-  doctorCard: {
-    width: 120,
-    backgroundColor: "#fff",
-    borderRadius: 14,
-    padding: 12,
-    marginRight: 12,
-    alignItems: "center",
-    elevation: 3,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-  },
-  doctorImage: { width: 60, height: 60, borderRadius: 30, marginBottom: 8 },
-  doctorName: { fontWeight: "700", fontSize: 13, color: "#111" },
-  doctorSpec: { fontSize: 12, color: "#555" },
-  doctorDistance: { fontSize: 11, color: "#999", marginTop: 4 },
-
-  articleCard: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#f9fafb",
-    borderRadius: 12,
-    padding: 12,
-    marginBottom: 12,
-  },
-  articleIcon: {
-    width: 36,
-    height: 36,
-    borderRadius: 10,
-    backgroundColor: "#e0f2fe",
-    alignItems: "center",
-    justifyContent: "center",
-    marginRight: 12,
-  },
-  articleTitle: { fontSize: 14, fontWeight: "700", color: "#111" },
-  articleCategory: { fontSize: 12, color: "#666" },
+  bannerImage: { width: 140, height: 140 },
 });

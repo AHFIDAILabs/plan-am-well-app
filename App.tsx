@@ -12,7 +12,7 @@ function MainApp() {
   return (
     <NavigationContainer theme={theme}>
       <AppNavigator />
-      <Toast />
+      <Toast position="top" topOffset={50} />
     </NavigationContainer>
   );
 }
