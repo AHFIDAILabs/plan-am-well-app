@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { View, Text, SafeAreaView, TextInput, ScrollView, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, TextInput, ScrollView, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { CategoryPill } from '../../components/doctor/CategoryPill';
 import { DoctorCard } from '../../components/doctor/DoctorCard';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 // Mock Data Structure (replace with actual API data later)
 const MOCK_CATEGORIES = ['All', 'Dentist', 'Cardiology', 'Physio Therapy', 'Ophthalmology', 'Pediatrics'];

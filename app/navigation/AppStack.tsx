@@ -3,6 +3,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import UserDashboardScreen from "../screens/dashboards/UserDashboardScreen";
 import ProfileScreen from "../screens/profiles/ProfileScreen";
 import HomeScreen from "../screens/HomeScreen";
+import { FindDoctorScreen } from "../screens/findServices/FindDoctorScreen";
 
 // import ForgotPasswordScreen from "../screens/auth/ForgotPasswordScreen";
 
@@ -14,6 +15,7 @@ ProfileScreen: {userId: string | undefined};
 DoctorProfile: {userId: string | undefined};
   ForgotPassword: undefined;
   Welcome: undefined;
+  FindDoctor: undefined;
 
 };
 
@@ -31,6 +33,7 @@ export default function AppStack() {
             <Stack.Screen name="Home" component={HomeScreen} />
       <Stack.Screen name="UserDashboard" component={UserDashboardScreen} />
       <Stack.Screen name="ProfileScreen" component={ProfileScreen} />
+      <Stack.Screen name="FindDoctor" component={FindDoctorScreen} />
     </Stack.Navigator>
   );
 }

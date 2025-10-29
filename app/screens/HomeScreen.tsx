@@ -35,11 +35,36 @@ export default function HomeScreen({ navigation }: any) {
     { key: "ambulance", label: "Ambulance", icon: "car-outline", color: "#ef4444" },
   ];
 
-  const topDoctors = [
-    { id: "1", name: "Dr. Dexter", specialty: "Cardiologist", distance: "500m away" },
-    { id: "2", name: "Dr. Lisa", specialty: "Psychologist", distance: "1.5km away" },
-    { id: "3", name: "Dr. John", specialty: "Orthopedist", distance: "2km away" },
-  ];
+const topDoctors = [
+    { 
+        _id: "doc1", // Required by Mongoose User/Doctor type
+        name: "Dr. Dexter", 
+        specialty: "Cardiologist", 
+        distance: "500m away",
+        rating: 4.8, // Required by ListDoctor type
+        specialization: "Cardiologist", // Required by Doctor schema
+        avatar: { url: 'https://i.pravatar.cc/100?img=1' }, // Required by Doctor schema
+        // You would typically include other Doctor type fields here
+    },
+    { 
+        _id: "doc2",
+        name: "Dr. Lisa", 
+        specialty: "Psychologist", 
+        distance: "1.5km away",
+        rating: 4.5,
+        specialization: "Psychologist", 
+        avatar: { url: 'https://i.pravatar.cc/100?img=2' },
+    },
+    { 
+        _id: "doc3",
+        name: "Dr. John", 
+        specialty: "Orthopedist", 
+        distance: "2km away",
+        rating: 4.2,
+        specialization: "Orthopedist",
+        avatar: { url: 'https://i.pravatar.cc/100?img=3' },
+    },
+];
 
   const healthArticles = [
     { id: "a1", title: "How to maintain a healthy heart", category: "Health Tips" },
@@ -118,14 +143,14 @@ export default function HomeScreen({ navigation }: any) {
 
         <View style={styles.sectionHeader}>
           <Text style={styles.sectionTitle}>Top Doctor</Text>
-          <TouchableOpacity>
+          <TouchableOpacity >
             <Text style={styles.seeAll}>See all</Text>
           </TouchableOpacity>
         </View>
 
         <FlatList
           data={topDoctors}
-          keyExtractor={(item) => item.id}
+          keyExtractor={(item) => item._id}
           horizontal
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={{ paddingVertical: 6 }}
