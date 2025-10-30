@@ -55,14 +55,14 @@ export type User = {
   _id: string;
   firstName?: string;
   lastName?: string;
-  email: string;
+  email?: string;
   phone?: string;
   gender?: "Male" | "Female" | "Other";
   dob?: string; // ISO date string
   address?: Address;
   bloodGroup?: string;
   avatar?: Avatar;
-  role: "User" | "Doctor" | "Admin" | string;
+  role?: "User" | "Doctor" | "Admin" | string;
   isAnonymous?: boolean;
   alias?: string;
   isActive?: boolean;
@@ -83,13 +83,13 @@ export type User = {
  * making doctor-specific Mongoose schema fields required.
  */
 export type Doctor = User & {
-  role: "Doctor";
+  role?: "Doctor";
   
   // Fields required by the Mongoose schema for a Doctor
-  specialization: string;
-  qualifications: string[];
-  experienceYears: number;
-  consultationFee: number;
+  specialization?: string;
+  qualifications?: string[];
+  experienceYears?: number;
+  consultationFee?: number;
   
   // Optional Doctor-specific fields
   bio?: string;
@@ -97,5 +97,5 @@ export type Doctor = User & {
   ratings?: Rating[];
   
   // Mongoose Virtual Field
-  displayName: string;
+  displayName?: string;
 };
